@@ -1,0 +1,611 @@
+<?php
+/**
+ * Implemenation of hook_install().
+ */
+function interstitiel_install() {
+  drupal_install_schema('interstitiel');
+
+  $content_type_infos = content_types('interstitiel');
+
+  if(count($content_type_infos['tables'])<=0){
+  	interstitiel_create_contentype_interstitiel();
+    node_types_rebuild();
+  }
+}
+
+/**
+ * Implemenation of hook_uninstall().
+ */
+function interstitiel_uninstall() {
+  drupal_uninstall_schema('interstitiel');
+  node_type_delete('interstitiel');
+  node_types_rebuild();
+}
+
+/**
+ * Implemenation of hook_schema().
+ */
+function interstitiel_schema() {
+  $schema = array();
+  $schema['interstitiel_log'] = array(
+    'description' => 'Stores IP for persistent display.',
+    'fields' => array(
+      'ip' => array(
+        'type' => 'varchar',
+        'length' => 15,
+        'not null' => TRUE,
+        'description' => "visitor ip",
+      ),
+      'nid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+        'description' => "nid of interstitiel",
+      ),
+      'datetime' => array(
+        'type' => 'varchar',
+        'length' => 10,
+        'not null' => TRUE,
+        'description' => "datetime of last visit.",
+      ),
+    ),
+    'primary key' => array('ip','nid'),
+  );
+  return $schema;
+}
+
+function interstitiel_create_contentype_interstitiel(){
+  include 'contrib/content_copy.inc';
+
+  $content['type']  = array (
+    'name' => 'Interstitiel',
+    'type' => 'interstitiel',
+    'description' => '',
+    'title_label' => 'Titre',
+    'body_label' => '',
+    'min_word_count' => '0',
+    'help' => '',
+    'node_options' =>
+    array (
+      'status' => true,
+      'promote' => false,
+      'sticky' => false,
+      'revision' => false,
+    ),
+    'language_content_type' => '2',
+    'upload' => '0',
+    'old_type' => 'interstitiel',
+    'orig_type' => '',
+    'module' => 'node',
+    'custom' => '1',
+    'modified' => '1',
+    'locked' => '0',
+    'comment' => '0',
+    'comment_default_mode' => '4',
+    'comment_default_order' => '1',
+    'comment_default_per_page' => '50',
+    'comment_controls' => '3',
+    'comment_anonymous' => '0',
+    'comment_subject_field' => '1',
+    'comment_preview' => '1',
+    'comment_form_location' => '0',
+    'custom_breadcrumbs_show_form_table' => 0,
+    'print_display' => 0,
+    'print_display_comment' => 0,
+    'print_display_urllist' => 0,
+    'print_mail_display' => 0,
+    'print_mail_display_comment' => 0,
+    'print_mail_display_urllist' => 0,
+    'print_pdf_display' => 0,
+    'print_pdf_display_comment' => 0,
+    'print_pdf_display_urllist' => 0,
+    'scheduler_publish_enable' => 1,
+    'scheduler_publish_touch' => 0,
+    'scheduler_publish_required' => 0,
+    'scheduler_publish_revision' => 0,
+    'scheduler_unpublish_enable' => 1,
+    'scheduler_unpublish_required' => 1,
+    'scheduler_unpublish_revision' => 0,
+    'i18n_newnode_current' => 0,
+    'i18n_required_node' => 0,
+    'i18n_lock_node' => 0,
+    'i18n_node' => 1,
+  );
+  $content['fields']  = array (
+    0 =>
+    array (
+      'label' => 'Body',
+      'field_name' => 'field_body',
+      'type' => 'text',
+      'widget_type' => 'text_textarea',
+      'change' => 'Modifier les informations de base',
+      'weight' => '-3',
+      'rows' => '5',
+      'size' => 60,
+      'description' => '',
+      'default_value' =>
+      array (
+        0 =>
+        array (
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_body][0][value',
+        ),
+      ),
+      'default_value_php' => '',
+      'default_value_widget' => NULL,
+      'group' => false,
+      'conditional_fields' =>
+      array (
+        'available_fields' =>
+        array (
+          'field_persistance' => 'conditional_field_no_value',
+        ),
+      ),
+      'required' => 0,
+      'multiple' => '0',
+      'text_processing' => '1',
+      'max_length' => '',
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'op' => 'Enregistrer les paramètres du champ',
+      'module' => 'text',
+      'widget_module' => 'text',
+      'columns' =>
+      array (
+        'value' =>
+        array (
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => false,
+          'sortable' => true,
+          'views' => true,
+        ),
+      ),
+      'display_settings' =>
+      array (
+        'weight' => '-3',
+        'parent' => '',
+        4 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        2 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        3 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        5 =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'label' =>
+        array (
+          'format' => 'hidden',
+        ),
+        'teaser' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'full' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_resume' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'token' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+      ),
+    ),
+    1 =>
+    array (
+      'label' => 'Display on pages',
+      'field_name' => 'field_displayonpages',
+      'type' => 'text',
+      'widget_type' => 'text_textarea',
+      'change' => 'Modifier les informations de base',
+      'weight' => '-2',
+      'rows' => '5',
+      'size' => 60,
+      'description' => 'List pages url where this box has to display. One url by line.
+  Keep empty to display box in all pages',
+      'default_value' =>
+      array (
+        0 =>
+        array (
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_displayonpages][0][value',
+        ),
+      ),
+      'default_value_php' => '',
+      'default_value_widget' =>
+      array (
+        'field_displayonpages' =>
+        array (
+          0 =>
+          array (
+            'value' => '',
+            '_error_element' => 'default_value_widget][field_displayonpages][0][value',
+          ),
+        ),
+      ),
+      'group' => false,
+      'conditional_fields' =>
+      array (
+        'available_fields' =>
+        array (
+          'field_persistance' => 'conditional_field_no_value',
+        ),
+      ),
+      'required' => 0,
+      'multiple' => '0',
+      'text_processing' => '0',
+      'max_length' => '',
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'op' => 'Enregistrer les paramètres du champ',
+      'module' => 'text',
+      'widget_module' => 'text',
+      'columns' =>
+      array (
+        'value' =>
+        array (
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => false,
+          'sortable' => true,
+          'views' => true,
+        ),
+      ),
+      'display_settings' =>
+      array (
+        'weight' => '-2',
+        'parent' => '',
+        4 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        2 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        3 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        5 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'label' =>
+        array (
+          'format' => 'hidden',
+        ),
+        'teaser' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'full' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'ubox_resume' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'token' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+      ),
+    ),
+    2 =>
+    array (
+      'label' => 'Not display on pages',
+      'field_name' => 'field_notdisplayonpages',
+      'type' => 'text',
+      'widget_type' => 'text_textarea',
+      'change' => 'Modifier les informations de base',
+      'weight' => '-1',
+      'rows' => '5',
+      'size' => 60,
+      'description' => 'List pages url where this box has to not display. One url by line.
+  Keep empty to display box in all pages',
+      'default_value' =>
+      array (
+        0 =>
+        array (
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_notdisplayonpages][0][value',
+        ),
+      ),
+      'default_value_php' => '',
+      'default_value_widget' =>
+      array (
+        'field_notdisplayonpages' =>
+        array (
+          0 =>
+          array (
+            'value' => '',
+            '_error_element' => 'default_value_widget][field_notdisplayonpages][0][value',
+          ),
+        ),
+      ),
+      'group' => false,
+      'conditional_fields' =>
+      array (
+        'available_fields' =>
+        array (
+          'field_persistance' => 'conditional_field_no_value',
+        ),
+      ),
+      'required' => 0,
+      'multiple' => '0',
+      'text_processing' => '0',
+      'max_length' => '',
+      'allowed_values' => '',
+      'allowed_values_php' => '',
+      'op' => 'Enregistrer les paramètres du champ',
+      'module' => 'text',
+      'widget_module' => 'text',
+      'columns' =>
+      array (
+        'value' =>
+        array (
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => false,
+          'sortable' => true,
+          'views' => true,
+        ),
+      ),
+      'display_settings' =>
+      array (
+        'weight' => '-1',
+        'parent' => '',
+        4 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        2 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        3 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        5 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'label' =>
+        array (
+          'format' => 'hidden',
+        ),
+        'teaser' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'full' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'ubox_resume' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'token' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+      ),
+    ),
+    3 =>
+    array (
+      'label' => 'Persistance',
+      'field_name' => 'field_persistance',
+      'type' => 'text',
+      'widget_type' => 'optionwidgets_buttons',
+      'change' => 'Modifier les informations de base',
+      'weight' => 0,
+      'description' => 'Print interstitial on each visit or only first',
+      'default_value' =>
+      array (
+        0 =>
+        array (
+          'value' => 'first',
+        ),
+      ),
+      'default_value_php' => '',
+      'default_value_widget' =>
+      array (
+        'field_persistance' =>
+        array (
+          'value' => 'first',
+        ),
+      ),
+      'group' => false,
+      'required' => 1,
+      'multiple' => '0',
+      'text_processing' => '0',
+      'max_length' => '',
+      'allowed_values' => 'first|First
+  all|Always',
+      'allowed_values_php' => '',
+      'op' => 'Enregistrer les paramètres du champ',
+      'module' => 'text',
+      'widget_module' => 'optionwidgets',
+      'columns' =>
+      array (
+        'value' =>
+        array (
+          'type' => 'text',
+          'size' => 'big',
+          'not null' => false,
+          'sortable' => true,
+          'views' => true,
+        ),
+      ),
+      'display_settings' =>
+      array (
+        'weight' => 0,
+        'parent' => '',
+        4 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        2 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        3 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        5 =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'label' =>
+        array (
+          'format' => 'hidden',
+        ),
+        'teaser' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'full' =>
+        array (
+          'format' => 'hidden',
+          'exclude' => 0,
+        ),
+        'ubox_resume' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'ubox_ruban_slideshow' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+        'token' =>
+        array (
+          'format' => 'default',
+          'exclude' => 0,
+        ),
+      ),
+    ),
+  );
+  $content['extra']  = array (
+    'title' => '-5',
+    'revision_information' => '6',
+    'author' => '7',
+    'options' => '8',
+    'comment_settings' => '11',
+    'language' => '1',
+    'translation' => '13',
+    'menu' => '-4',
+    'path' => '10',
+    'custom_breadcrumbs' => '12',
+    'domain' => '2',
+    'print' => '9',
+    'scheduler_settings' => '3',
+    'workflow' => '4',
+    'nodewords' => '5',
+  );
+
+
+	install_content_copy_import_from_file($content);
+}

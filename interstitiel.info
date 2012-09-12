@@ -1,0 +1,5 @@
+name = Interstitiel
+description = "Show interstitiels"
+package = G-nova
+core = 6.x
+dependencies[] = content_copy
